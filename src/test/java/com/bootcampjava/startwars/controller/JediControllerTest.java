@@ -125,14 +125,13 @@ public class JediControllerTest {
 
         //act
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/jedi/{id}",1)
+                        .put("/jedi")
                         .content(asJsonString(mockJedi))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
 
                 //asserts
-                .andExpect(status().isNoContent())
-                .andExpect(header().string(HttpHeaders.ETAG, "\"1\""));
+                .andExpect(status().isNoContent());
     }
 
     // TODO: Teste do PUT com uma versao igual da ja existente - deve retornar um conflito
@@ -159,23 +158,22 @@ public class JediControllerTest {
     // TODO: Teste do PUT com erro - not found
     @Test
     @DisplayName("PUT /jedi/ - Not Found")
-    public void testPutJediNotFound() {
-//        //arrange
-//        Jedi mockJedi = new Jedi(1,"HanSolo", 10,1);
-//        DataAccessException e = new DataAccessException(""){};
-//        Mockito.doThrow(e).when(jediService).update(any(Jedi.class));
-//
-//        //act
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/jedi")
-//                        .content(asJsonString(mockJedi))
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//
-//                //asserts
-//                .andExpect(status().isNotFound());
+    public void testPutJediNotFound() throws Exception {
+        //arrange
+        Jedi mockJedi = new Jedi(1,"HanSolo", 10,1);
+        Mockito.doThrow(new Exception("")).when(jediService).update(any(Jedi.class));
 
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/jedi")
+                        .content(asJsonString(mockJedi))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                //asserts
+                .andExpect(status().isNotFound());
     }
+
 
     // TODO: Teste do delete com sucesso
     @Test
@@ -215,11 +213,18 @@ public class JediControllerTest {
     // TODO: Teste do delete com erro  - internal server error
     @Test
     @DisplayName("DELETE /jedi/ - Internal Server Error")
-    public void testDeleteInternalServerError(){
+    public void testDeleteInternalServerError() throws Exception {
+        //arrange
+        int id = 1;
+        Mockito.doThrow(new Exception("")).when(jediService).delete(id);
 
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/jedi/{id}", id))
+
+                //asserts
+                .andExpect(status().isInternalServerError());
     }
-
-
 
     static String asJsonString(final Object obj) {
         try {

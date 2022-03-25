@@ -58,10 +58,10 @@ public class JediController {
     }
 
     @PutMapping("/jedi")
-    public ResponseEntity<Jedi> updateJedi(@RequestBody Jedi jedi){
-        Boolean updatedJedi = jediService.update(jedi);
+    public ResponseEntity<Jedi> updateJedi(@RequestBody Jedi jedi) throws Exception {
 
-        try {
+        try{
+            Boolean updatedJedi = jediService.update(jedi);
             if(updatedJedi){
                 return ResponseEntity
                         .noContent()
@@ -69,18 +69,17 @@ public class JediController {
             }else{
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
-
-        } catch (DataAccessException e) {
+        }
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
     }
 
     @DeleteMapping("/jedi/{id}")
-    public ResponseEntity<Jedi> deleteJedi(@PathVariable int id){
-        Boolean deletedJedi = jediService.delete(id);
+    public ResponseEntity<Jedi> deleteJedi(@PathVariable int id) throws Exception {
 
         try {
+            Boolean deletedJedi = jediService.delete(id);
             if(deletedJedi){
                 return ResponseEntity
                         .noContent()
@@ -89,7 +88,7 @@ public class JediController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 

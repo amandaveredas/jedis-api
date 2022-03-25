@@ -47,27 +47,35 @@ public class JediService {
         return jediRepositoryImpl.save(jedi);
     }
 
-    public boolean update(Jedi jedi){
+    public boolean update(Jedi jedi) throws Exception {
         boolean updated = false;
 
         Optional<Jedi> savedJedi = this.findById(1);
 
         if(savedJedi.isPresent() && savedJedi.get().getVersion() == jedi.getVersion()){
                 return false;
+
+        }else if (savedJedi.isEmpty()){
+            throw new Exception("");
+
+        }else{
+            updated = jediRepositoryImpl.update(jedi);
         }
 
-        updated = jediRepositoryImpl.update(jedi);
 
         return updated;
     }
 
-    public boolean delete(int id) {
+    public boolean delete(int id) throws Exception {
         boolean deleted = false;
 
         Optional<Jedi> savedJedi = this.findById(1);
 
         if(savedJedi.isPresent()){
             deleted = jediRepositoryImpl.delete(id);
+            if(!deleted){
+                throw new Exception();
+            }
         }
 
         return deleted;
