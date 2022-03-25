@@ -56,4 +56,33 @@ public class JediController {
         }
     }
 
+    @PutMapping("/jedi/{id}")
+    public ResponseEntity<Jedi> updateJedi(@RequestBody Jedi jedi){
+        Boolean updatedJedi = jediService.update(jedi);
+
+        try {
+            if(updatedJedi){
+                return ResponseEntity
+                        .noContent()
+                        .eTag(Integer.toString(jedi.getVersion()))
+                        .build();
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @DeleteMapping("/jedi/{id}")
+    public ResponseEntity<Jedi> deleteJedi(@PathVariable int id){
+        Boolean deletedJedi = jediService.delete(id);
+
+        return null;
+    }
+
+
+
 }

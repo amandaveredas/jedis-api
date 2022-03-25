@@ -49,10 +49,10 @@ public class JediService {
     public boolean update(Jedi jedi) {
         boolean updated = false;
 
-        Jedi savedJedi = this.save(jedi);
+        if(jedi == null)
+            return false;
 
-        if (savedJedi != null) updated = true;
-
+        updated = jediRepositoryImpl.update(jedi);
         return updated;
     }
 

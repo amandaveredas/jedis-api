@@ -111,18 +111,59 @@ public class JediControllerTest {
     }
 
     // TODO: Teste do PUT com sucesso
+    @Test
+    @DisplayName("PUT /jedi/ - No Content")
+    public void testPutJediWithSuccess() throws Exception {
+        //arrange
+        Jedi mockJedi = new Jedi(1,"HanSolo", 10,1);
+        Mockito.doReturn(true).when(jediService).update(any(Jedi.class));
 
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/jedi/{id}",1)
+                        .content(asJsonString(mockJedi))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                //asserts
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.ETAG, "\"1\""));
+    }
 
     // TODO: Teste do PUT com uma versao igual da ja existente - deve retornar um conflito
+    @Test
+    @DisplayName("POST /jedi/ - Bad Request")
+    public void testPutJediWithSameVersionBadRequest(){
+
+    }
 
     // TODO: Teste do PUT com erro - not found
+    @Test
+    @DisplayName("POST /jedi/ - Not Found")
+    public void testPutJediNotFound(){
+
+    }
 
     // TODO: Teste do delete com sucesso
+    @Test
+    @DisplayName("POST /jedi/ - No Content")
+    public void testDeleteWithSuccess(){
+
+    }
 
     // TODO: Teste do delete com erro - deletar um id ja deletado
+    @Test
+    @DisplayName("POST /jedi/ - Not Found")
+    public void testDeleteNotFound(){
+
+    }
 
     // TODO: Teste do delete com erro  - internal server error
+    @Test
+    @DisplayName("POST /jedi/ - Internal Server Error")
+    public void testDeleteInternalServerError(){
 
+    }
 
 
 
