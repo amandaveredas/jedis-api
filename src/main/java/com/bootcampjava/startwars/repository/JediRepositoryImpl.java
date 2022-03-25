@@ -4,6 +4,7 @@ import com.bootcampjava.startwars.model.Jedi;
 import com.bootcampjava.startwars.service.JediService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -67,11 +68,12 @@ public class JediRepositoryImpl implements JediRepository {
 
     @Override
     public boolean update(Jedi jedi) {
-        return jdbcTemplate.update("UPDATE jedis SET name = ?, strength = ?, version = ? WHERE id = ?",
-                jedi.getName(),
-                jedi.getStrength(),
-                jedi.getVersion(),
-                jedi.getId()) == 1;
+
+            return jdbcTemplate.update("UPDATE jedis SET name = ?, strength = ?, version = ? WHERE id = ?",
+                    jedi.getName(),
+                    jedi.getStrength(),
+                    jedi.getVersion(),
+                    jedi.getId()) == 1;
     }
 
     @Override

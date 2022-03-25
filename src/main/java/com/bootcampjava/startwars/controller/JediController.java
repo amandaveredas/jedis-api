@@ -5,6 +5,7 @@ import com.bootcampjava.startwars.model.Jedi;
 import com.bootcampjava.startwars.service.JediService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,7 @@ public class JediController {
         }
     }
 
-    @PutMapping("/jedi/{id}")
+    @PutMapping("/jedi")
     public ResponseEntity<Jedi> updateJedi(@RequestBody Jedi jedi){
         Boolean updatedJedi = jediService.update(jedi);
 
@@ -64,14 +65,13 @@ public class JediController {
             if(updatedJedi){
                 return ResponseEntity
                         .noContent()
-                        .eTag(Integer.toString(jedi.getVersion()))
                         .build();
             }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
     }
@@ -80,7 +80,21 @@ public class JediController {
     public ResponseEntity<Jedi> deleteJedi(@PathVariable int id){
         Boolean deletedJedi = jediService.delete(id);
 
-        return null;
+        try {
+            if(deletedJedi){
+                return ResponseEntity
+                        .noContent()
+                        .build();
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+
+
     }
 
 

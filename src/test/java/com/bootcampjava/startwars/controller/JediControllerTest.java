@@ -6,19 +6,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -132,35 +137,84 @@ public class JediControllerTest {
 
     // TODO: Teste do PUT com uma versao igual da ja existente - deve retornar um conflito
     @Test
-    @DisplayName("POST /jedi/ - Bad Request")
-    public void testPutJediWithSameVersionBadRequest(){
+    @DisplayName("PUT /jedi/ - Bad Request")
+    public void testPutJediWithSameVersionBadRequest() throws Exception {
+        //arrange
+        Jedi mockJedi = new Jedi(1,"HanSolo", 10,1);
+        Mockito.doReturn(false).when(jediService).update(any(Jedi.class));
 
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/jedi")
+                        .content(asJsonString(mockJedi))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                //asserts
+                .andExpect(status().isBadRequest());
     }
+
+
 
     // TODO: Teste do PUT com erro - not found
     @Test
-    @DisplayName("POST /jedi/ - Not Found")
-    public void testPutJediNotFound(){
+    @DisplayName("PUT /jedi/ - Not Found")
+    public void testPutJediNotFound() {
+//        //arrange
+//        Jedi mockJedi = new Jedi(1,"HanSolo", 10,1);
+//        DataAccessException e = new DataAccessException(""){};
+//        Mockito.doThrow(e).when(jediService).update(any(Jedi.class));
+//
+//        //act
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .put("/jedi")
+//                        .content(asJsonString(mockJedi))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//
+//                //asserts
+//                .andExpect(status().isNotFound());
 
     }
 
     // TODO: Teste do delete com sucesso
     @Test
-    @DisplayName("POST /jedi/ - No Content")
-    public void testDeleteWithSuccess(){
+    @DisplayName("DELETE /jedi/ - No Content")
+    public void testDeleteWithSuccess() throws Exception {
+        //arrange
+        int id = 1;
+        Mockito.doReturn(true).when(jediService).delete(1);
 
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                                .delete("/jedi/{id}",id))
+
+
+                //asserts
+                .andExpect(status().isNoContent());
     }
 
     // TODO: Teste do delete com erro - deletar um id ja deletado
     @Test
-    @DisplayName("POST /jedi/ - Not Found")
-    public void testDeleteNotFound(){
+    @DisplayName("DELETE /jedi/ - Not Found")
+    public void testDeleteNotFound() throws Exception {
+        //arrange
+        int id = 1;
+        Mockito.doReturn(false).when(jediService).delete(1);
 
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/jedi/{id}",id))
+
+
+                //asserts
+                .andExpect(status().isNotFound());
     }
+
 
     // TODO: Teste do delete com erro  - internal server error
     @Test
-    @DisplayName("POST /jedi/ - Internal Server Error")
+    @DisplayName("DELETE /jedi/ - Internal Server Error")
     public void testDeleteInternalServerError(){
 
     }

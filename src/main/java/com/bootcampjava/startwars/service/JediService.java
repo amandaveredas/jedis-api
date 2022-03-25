@@ -4,6 +4,7 @@ import com.bootcampjava.startwars.model.Jedi;
 import com.bootcampjava.startwars.repository.JediRepositoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,17 +47,29 @@ public class JediService {
         return jediRepositoryImpl.save(jedi);
     }
 
-    public boolean update(Jedi jedi) {
+    public boolean update(Jedi jedi){
         boolean updated = false;
 
-        if(jedi == null)
-            return false;
+        Optional<Jedi> savedJedi = this.findById(1);
+
+        if(savedJedi.isPresent() && savedJedi.get().getVersion() == jedi.getVersion()){
+                return false;
+        }
 
         updated = jediRepositoryImpl.update(jedi);
+
         return updated;
     }
 
     public boolean delete(int id) {
-        return true;
+        boolean deleted = false;
+
+        Optional<Jedi> savedJedi = this.findById(1);
+
+        if(savedJedi.isPresent()){
+            deleted = jediRepositoryImpl.delete(id);
+        }
+
+        return deleted;
     }
 }
