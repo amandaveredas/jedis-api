@@ -15,8 +15,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -80,7 +82,36 @@ public class JediControllerTest {
 
     // TODO: Teste do POST com sucesso
 
+    @Test
+    @DisplayName("POST /jedi/ - Created")
+    public void testPostJediWithSuccess() throws Exception {
+        //arrange
+        Jedi mockJediReturned = new Jedi(1,"HanSolo", 10,1);
+        Mockito.doReturn(mockJediReturned).when(jediService).save(any(Jedi.class));
+
+        //act
+        mockMvc.perform(MockMvcRequestBuilders
+                                .post("/jedi")
+                                .content(asJsonString(mockJediReturned))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+
+                //asserts
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
+
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("HanSolo")))
+                .andExpect(jsonPath("$.strength", is(10)))
+                .andExpect(jsonPath("$.version", is(1)));
+
+
+    }
+
     // TODO: Teste do PUT com sucesso
+
 
     // TODO: Teste do PUT com uma versao igual da ja existente - deve retornar um conflito
 
